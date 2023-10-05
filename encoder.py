@@ -2,7 +2,10 @@
 
 import argparse
 from pathlib import Path
+from random import randrange
 from PIL import Image, ImageFilter, ImageOps
+import cv2
+import numpy as np
 import qrcode
 import uuid
 
@@ -11,57 +14,56 @@ from util import filename_add_suffix
 
 class Encoder:
     def __init__(self, filename):
-        self.image = Image.open(filename).convert("RGB")
-        self.w, self.h = self.image.size
+        self.image = cv2.imread(filename)
+        self.rows, self.cols, _ = self.image.shape
         self.filename = Path(filename)
         self.debug = False
-        self.gamma = 5
+        self.gamma = 100
 
     def __gen_qr(self, message):
         qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
         qr.add_data(message)
         qr.make(fit=True)
         # img = qr.make_image(back_color="transparent", fill_color=(0, 0, 0, self.gamma))
-        img = qr.make_image()
-        wh = min(self.w, self.h)
-        new_img = Image.new("L", (self.w, self.h))
-        img = img.resize((wh, wh))
-        new_img.paste(img, ((self.w - wh) // 2, (self.h - wh) // 2))
-        if self.debug:
-            bw_img = qr.make_image()
-            qr_filename = filename_add_suffix(self.filename, suffix="qr", ext="png")
-            bw_img.save(qr_filename)
-        return new_img
+        qr_img = qr.make_image()
+        # print(list(qr_img.getdata()))
+        cv_img = np.array(qr_img.getdata(), dtype=np.float32)
+        cv_img = 255 - cv_img
+        cv_img = np.reshape(cv_img, qr_img.size)
+
+        cr = min(self.cols, self.rows)
+        cv_img = cv2.resize(cv_img, (cr, cr))
+        blank_img = np.zeros((self.rows, self.cols), dtype=np.uint8)
+
+        # Place the resized image in the center of the canvas
+        r_offset = (self.rows - cv_img.shape[0]) // 2
+        c_offset = (self.cols - cv_img.shape[1]) // 2
+        blank_img[r_offset : r_offset + cv_img.shape[0], c_offset : c_offset + cv_img.shape[1]] = cv_img
+
+        # self.__save(img)
+        return blank_img
 
     def __add_qr(self, qr):
-        for x in range(self.w):
-            for y in range(self.h):
-                if qr.getpixel((x, y)) == 0:
-                    p = list(self.image.getpixel((x, y)))
-                    min_i = 0
-                    mm = 255
-                    for i in range(len(p)):
-                        if p[i] < mm:
-                            mm = p[i]
-                            min_i = i
+        # print(self.image.shape)
+        deltas = np.random.randint(self.gamma, self.gamma + 5, size=qr.shape)
+        deltas = cv2.bitwise_and(deltas, deltas, mask=qr)
+        # cv2.imwrite("test2.png", deltas)
+        min_is = np.argmin(self.image, axis=2)
 
-                    if p[min_i] >= self.gamma:
-                        p[min_i] -= self.gamma
-                    else:
-                        p[min_i] += self.gamma
-                    self.image.putpixel((x, y), tuple(p))
+        for c in range(self.cols):
+            for r in range(self.rows):
+                min_i = min_is[r, c]
+                self.image[r, c, min_i] += deltas[r, c]
 
-    def __save(self):
+    def __save(self, img):
         out_filename = filename_add_suffix(self.filename, suffix="out")
-        img = self.image.convert("RGB")
-        img.save(out_filename)
-        return img
+        cv2.imwrite(out_filename, img)
 
     def encode(self, message=str(uuid.uuid4())):
         print(f"encode message {message}")
         qr = self.__gen_qr(message)
         self.__add_qr(qr)
-        img = self.__save()
+        self.__save(self.image)
         # img.show()
 
 

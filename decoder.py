@@ -21,22 +21,24 @@ class Decoder:
 
     def decode(self, masked_filename):
         masked_image = cv2.imread(masked_filename)
-        rows, cols, _ = masked_image.shape
-        # print(f"masked_image.shape {masked_image.shape}")
-        qr_image = np.zeros((rows, cols, 3), np.uint8)
-        # print(f"qr_image.shape {qr_image.shape}")
-        for x in range(self.rows):
-            for y in range(self.cols):
-                op = self.image[x, y]
-                mp = masked_image[x, y]
-                # print(f"op {op}")
-                # print(f"mp {mp}")
-                qr_image[x, y] = [255, 255, 255]
-                for i in range(len(op)):
-                    if abs(int(op[i]) - int(mp[i])) >= self.gamma:
-                        qr_image[x, y] = [0, 0, 0]
+        diff_image = cv2.absdiff(self.image, masked_image)
+
+        (b, g, r) = cv2.split(diff_image)
+        _, b = cv2.threshold(b, self.gamma, 255, cv2.THRESH_BINARY_INV)
+        # cv2.imwrite(filename_add_suffix(self.filename, "b"), b)
+
+        _, g = cv2.threshold(g, self.gamma, 255, cv2.THRESH_BINARY_INV)
+        # cv2.imwrite(filename_add_suffix(self.filename, "g"), g)
+
+        _, r = cv2.threshold(r, self.gamma, 255, cv2.THRESH_BINARY_INV)
+        # cv2.imwrite(filename_add_suffix(self.filename, "r"), r)
+
+        diff_image = cv2.min(b, g)
+        diff_image = cv2.min(diff_image, r)
+
+        # diff_image = cv2.adaptiveThreshold(diff_image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
         fname = filename_add_suffix(self.filename, "qr")
-        cv2.imwrite(fname, qr_image)
+        cv2.imwrite(fname, diff_image)
         # value = pyzbar.decode(qr_image)
 
         # print(f"value {value}")
