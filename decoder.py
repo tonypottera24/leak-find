@@ -3,9 +3,6 @@
 import argparse
 from pathlib import Path
 import cv2
-import numpy as np
-
-# from pyzbar import pyzbar
 
 from util import filename_add_suffix
 

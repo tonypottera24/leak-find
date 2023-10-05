@@ -1,15 +1,7 @@
 import hashlib
-from io import BytesIO
-from pathlib import Path
-import uuid
-import cv2
 import numpy as np
 import streamlit as st
-import pandas as pd
 from decoder import Decoder
-
-# from decoder import Decoder
-
 from encoder_cv import Encoder
 from PIL import Image
 
@@ -90,6 +82,3 @@ if original_upload:
             if decoder_upload:
                 decoded_image = decode_image(original_upload, decoder_upload, gamma)
                 st.image(decoded_image, caption="Decoded Image")
-
-
-# d = Decoder()

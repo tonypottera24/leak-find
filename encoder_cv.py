@@ -2,8 +2,6 @@
 
 import argparse
 from pathlib import Path
-from random import randrange
-from PIL import Image, ImageFilter, ImageOps
 import cv2
 import numpy as np
 import qrcode
@@ -37,8 +35,6 @@ class Encoder:
         r_offset = (self.rows - cv_img.shape[0]) // 2
         c_offset = (self.cols - cv_img.shape[1]) // 2
         blank_img[r_offset : r_offset + cv_img.shape[0], c_offset : c_offset + cv_img.shape[1]] = cv_img
-
-        # self.__save(img)
         return blank_img
 
     def __add_qr(self, qr, gamma):
