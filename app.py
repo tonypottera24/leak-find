@@ -48,7 +48,7 @@ if original_upload:
     with col1:
         st.header("Encode")
         message = st.text_input("message", value=get_hash(original_upload), key="encode_message")
-        gamma = st.number_input("gamma", value=5, min_value=0, max_value=255, key="encode_gamma")
+        gamma = st.number_input("gamma", value=1, min_value=0, max_value=255, key="encode_gamma")
         encode_bt = st.button("Encode")
         print(st.session_state)
         if encode_bt:
@@ -67,7 +67,7 @@ if original_upload:
                 st.session_state.from_encoded = False
                 st.session_state.encoded = False
                 st.rerun()
-            gamma = st.number_input("gamma", value=3, min_value=0, max_value=255)
+            gamma = st.number_input("gamma", value=1, min_value=0, max_value=255)
             if from_encoded_bt:
                 st.session_state.from_encoded = True
             if st.session_state.from_encoded:
@@ -78,7 +78,7 @@ if original_upload:
                 st.image(decoded_image, caption="Decoded Image")
         else:
             decoder_upload = st.file_uploader("Choose a file", type=["png", "jpg", "jpeg"], key="decoder_upload")
-            gamma = st.number_input("gamma", value=3, min_value=0, max_value=255)
+            gamma = st.number_input("gamma", value=1, min_value=0, max_value=255)
             if decoder_upload:
                 decoded_image = decode_image(original_upload, decoder_upload, gamma)
                 st.image(decoded_image, caption="Decoded Image")
