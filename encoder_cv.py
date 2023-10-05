@@ -13,12 +13,10 @@ from util import filename_add_suffix
 
 
 class Encoder:
-    def __init__(self, filename):
-        self.image = cv2.imread(filename)
+    def __init__(self, image):
+        self.image = image
         self.rows, self.cols, _ = self.image.shape
-        self.filename = Path(filename)
         self.debug = False
-        self.gamma = 100
 
     def __gen_qr(self, message):
         qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
@@ -43,9 +41,9 @@ class Encoder:
         # self.__save(img)
         return blank_img
 
-    def __add_qr(self, qr):
+    def __add_qr(self, qr, gamma):
         # print(self.image.shape)
-        deltas = np.random.randint(self.gamma, self.gamma + 5, size=qr.shape)
+        deltas = np.random.randint(gamma, gamma + 5, size=qr.shape)
         deltas = cv2.bitwise_and(deltas, deltas, mask=qr)
         # cv2.imwrite("test2.png", deltas)
         min_is = np.argmin(self.image, axis=2)
@@ -53,23 +51,30 @@ class Encoder:
         for c in range(self.cols):
             for r in range(self.rows):
                 min_i = min_is[r, c]
-                self.image[r, c, min_i] += deltas[r, c]
+                if deltas[r, c] > 0:
+                    if self.image[r, c, min_i] >= deltas[r, c]:
+                        self.image[r, c, min_i] -= deltas[r, c]
+                    else:
+                        self.image[r, c, min_i] += deltas[r, c]
 
-    def __save(self, img):
-        out_filename = filename_add_suffix(self.filename, suffix="out")
-        cv2.imwrite(out_filename, img)
+    def save(self, filename):
+        filename = Path(filename)
+        out_filename = filename_add_suffix(filename, suffix="out")
+        cv2.imwrite(out_filename, self.image)
 
-    def encode(self, message=str(uuid.uuid4())):
+    def encode(self, message=str(uuid.uuid4()), gamma=5):
         print(f"encode message {message}")
         qr = self.__gen_qr(message)
-        self.__add_qr(qr)
-        self.__save(self.image)
+        self.__add_qr(qr, gamma)
         # img.show()
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument("filename")
-args = parser.parse_args()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("filename")
+    args = parser.parse_args()
 
-e = Encoder(args.filename)
-e.encode()
+    image = cv2.imread(args.filename)
+    e = Encoder(image)
+    e.encode()
+    e.save(args.filename)
