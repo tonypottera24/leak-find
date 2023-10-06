@@ -73,7 +73,10 @@ if original_upload:
             st.image(original_upload.getvalue())
         with col2:
             st.subheader("Encoded Image")
-            st.image(encoded_image)
+            if decoder_upload:
+                st.image(decoder_upload)
+            else:
+                st.image(encoded_image)
         with col3:
             st.subheader("Decoded Image")
             if decoder_upload:
