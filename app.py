@@ -29,7 +29,7 @@ def decode_image(ori_upload, masked_upload, gamma):
         masked_img = masked_upload
     else:
         masked_img = Image.open(masked_upload)
-        masked_upload = ImageOps.exif_transpose(masked_upload)
+        masked_img = ImageOps.exif_transpose(masked_img)
         masked_img = np.array(masked_img)
     d.decode(masked_img, gamma=gamma)
     return d.diff_image

@@ -15,7 +15,11 @@ class Decoder:
         self.debug = True
 
     def decode(self, masked_image, gamma=1):
-        masked_image = cv2.resize(masked_image, (self.rows, self.cols))
+        # print(self.image.shape)
+        # print(masked_image.shape)
+        masked_image = cv2.resize(masked_image, (self.cols, self.rows))
+        # print(self.image.shape)
+        # print(masked_image.shape)
         diff_image = cv2.absdiff(self.image, masked_image)
 
         (b, g, r) = cv2.split(diff_image)
