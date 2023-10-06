@@ -3,7 +3,7 @@ import numpy as np
 import streamlit as st
 from decoder import Decoder
 from encoder_cv import Encoder
-from PIL import Image
+from PIL import Image, ImageOps
 
 
 @st.cache_data
@@ -14,6 +14,7 @@ def get_hash(upload):
 @st.cache_data
 def encode_image(upload, message, gamma):
     ori_img = Image.open(upload)
+    ori_img = ImageOps.exif_transpose(ori_img)
     e = Encoder(np.array(ori_img))
     e.encode(message=message, gamma=gamma)
     return e.image
@@ -22,11 +23,13 @@ def encode_image(upload, message, gamma):
 @st.cache_data
 def decode_image(ori_upload, masked_upload, gamma):
     ori_img = Image.open(ori_upload)
+    ori_img = ImageOps.exif_transpose(ori_img)
     d = Decoder(np.array(ori_img))
     if type(masked_upload) is np.ndarray:
         masked_img = masked_upload
     else:
         masked_img = Image.open(masked_upload)
+        masked_upload = ImageOps.exif_transpose(masked_upload)
         masked_img = np.array(masked_img)
     d.decode(masked_img, gamma=gamma)
     return d.diff_image
