@@ -41,47 +41,43 @@ st.header("Original Image")
 
 original_upload = st.file_uploader("Choose a file", type=["png", "jpg", "jpeg"], key="original_upload")
 
-if original_upload:
-    if "encoded" not in st.session_state:
-        st.session_state.encoded = False
-    if "from_encoded" not in st.session_state:
-        st.session_state.from_encoded = False
+if "encoded" not in st.session_state:
+    st.session_state.encoded = False
 
-    col1, col2 = st.columns(2)
-    with col1:
-        st.header("Encode")
+if original_upload:
+    encode_tab, decode_tab = st.tabs(["Encode", "Decode"])
+
+    with encode_tab:
         message = st.text_input("message", value=get_hash(original_upload), key="encode_message")
         gamma = st.number_input("gamma", value=1, min_value=0, max_value=255, key="encode_gamma")
-        encode_bt = st.button("Encode")
         print(st.session_state)
-        if encode_bt:
-            st.session_state.encoded = True
-        if st.session_state.encoded:
-            encoded_image = encode_image(original_upload, message, gamma)
-            st.image(encoded_image, caption="Encoded Image")
+        encoded_image = encode_image(original_upload, message, gamma)
+        st.session_state.encoded = True
+        col1, col2 = st.columns(2)
+        with col1:
+            st.subheader("Original Image")
+            st.image(original_upload.getvalue())
+        with col2:
+            st.subheader("Encoded Image")
+            st.image(encoded_image)
 
-    with col2:
-        st.header("Decode")
-        decoder_upload = None
-        if st.session_state.encoded:
-            from_encoded_bt = st.button("From Encoded", key="from_encoded_bt")
-            upload_new_bt = st.button("Upload Image")
-            if upload_new_bt:
-                st.session_state.from_encoded = False
-                st.session_state.encoded = False
-                st.rerun()
-            gamma = st.number_input("gamma", value=1, min_value=0, max_value=255)
-            if from_encoded_bt:
-                st.session_state.from_encoded = True
-            if st.session_state.from_encoded:
-                encoded_image = encode_image(
-                    original_upload, st.session_state.encode_message, st.session_state.encode_gamma
-                )
-                decoded_image = decode_image(original_upload, encoded_image, gamma)
-                st.image(decoded_image, caption="Decoded Image")
-        else:
-            decoder_upload = st.file_uploader("Choose a file", type=["png", "jpg", "jpeg"], key="decoder_upload")
-            gamma = st.number_input("gamma", value=1, min_value=0, max_value=255)
+    with decode_tab:
+        decoder_upload = st.file_uploader("Choose a file", type=["png", "jpg", "jpeg"], key="decoder_upload")
+        # if st.session_state.encoded:
+
+        gamma = st.number_input("gamma", value=1, min_value=0, max_value=255)
+        col1, col2, col3 = st.columns(3)
+        encoded_image = encode_image(original_upload, st.session_state.encode_message, st.session_state.encode_gamma)
+        with col1:
+            st.subheader("Original Image")
+            st.image(original_upload.getvalue())
+        with col2:
+            st.subheader("Encoded Image")
+            st.image(encoded_image)
+        with col3:
+            st.subheader("Decoded Image")
             if decoder_upload:
                 decoded_image = decode_image(original_upload, decoder_upload, gamma)
-                st.image(decoded_image, caption="Decoded Image")
+            else:
+                decoded_image = decode_image(original_upload, encoded_image, gamma)
+            st.image(decoded_image)
