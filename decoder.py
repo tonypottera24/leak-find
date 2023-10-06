@@ -14,7 +14,8 @@ class Decoder:
         # print(f"self.image.shape {self.image.shape}")
         self.debug = True
 
-    def decode(self, masked_image, gamma=3):
+    def decode(self, masked_image, gamma=1):
+        masked_image = cv2.resize(masked_image, (self.rows, self.cols))
         diff_image = cv2.absdiff(self.image, masked_image)
 
         (b, g, r) = cv2.split(diff_image)

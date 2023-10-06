@@ -58,7 +58,7 @@ class Encoder:
         out_filename = filename_add_suffix(filename, suffix="out")
         cv2.imwrite(out_filename, self.image)
 
-    def encode(self, message=str(uuid.uuid4()), gamma=5):
+    def encode(self, message=str(uuid.uuid4()), gamma=1):
         print(f"encode message {message}")
         qr = self.__gen_qr(message)
         self.__add_qr(qr, gamma)
