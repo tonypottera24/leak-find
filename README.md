@@ -1,7 +1,6 @@
 # Leak Find
 
-Leak Find is a tool to embed secret messages into an image.
-It can help you claim your legal right if someone re-distribute your photos on social media without your permission.
+Leak Find is a tool to embed secret messages into an image. It can help you claim your legal rights if someone re-distributes your photos on social media without your permission.
 
 You can use the demo website or run the python code locally.
 
