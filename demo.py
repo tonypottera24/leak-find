@@ -2,7 +2,7 @@ import hashlib
 import numpy as np
 import streamlit as st
 from decoder import Decoder
-from encoder_cv import Encoder
+from encoder import Encoder
 from PIL import Image, ImageOps
 
 
