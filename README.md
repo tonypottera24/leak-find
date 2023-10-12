@@ -13,7 +13,7 @@ The detailed steps are explained as following.
 2. Enter a message or use the randomly generated message.
 3. Download the encoded image.
 
-![encode](img/encode.png "encode")
+<img src="img/encode.png" height="500">
 
 #### Decode
 
@@ -21,7 +21,7 @@ The detailed steps are explained as following.
 2. Upload the encoded image (optional)
 3. Get the decoded QR code
 
-![decode](img/decode.png "decode")
+<img src="img/decode.png" height="500">
 
 ## Usage:
 
