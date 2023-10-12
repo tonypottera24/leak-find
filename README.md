@@ -1,10 +1,12 @@
 # Leak Find
 
-* Demo: https://leak-find.streamlit.app/
-
 Leak Find is a tool to embed secret messages into an image.
 It can help you claim your legal right if someone re-distribute your photos on social media without your permission.
+
 You can use the demo website or run the python code locally.
+
+* Demo: https://leak-find.streamlit.app/
+
 The detailed steps are explained as following.
 
 #### Encode
