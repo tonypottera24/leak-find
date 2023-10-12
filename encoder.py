@@ -68,9 +68,11 @@ class Encoder:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("filename")
+    parser.add_argument("-m", "--message", type=str, default=str(uuid.uuid4()))
+    parser.add_argument("-g", "--gamma", type=int, default=1)
     args = parser.parse_args()
 
     image = cv2.imread(args.filename)
     e = Encoder(image)
-    e.encode()
+    e.encode(message=args.message, gamma=args.gamma)
     e.save(args.filename)
