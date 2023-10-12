@@ -2,8 +2,26 @@
 
 * Demo: https://leak-find.streamlit.app/
 
-This is a demo for how to embed (encode) a QR code into an image and decode it back.
+Leak Find is a tool to embed secret messages into an image.
+It can help you claim your legal right if someone re-distribute your photos on social media without your permission.
+You can use the demo website or run the python code locally.
+The detailed steps are explained as following.
 
+#### Encode
+
+1. Upload the original image.
+2. Enter a message or use the randomly generated message.
+3. Download the encoded image.
+
+![encode](img/encode.png "encode")
+
+#### Decode
+
+1. Upload the original image (optional)
+2. Upload the encoded image (optional)
+3. Get the decoded QR code
+
+![decode](img/decode.png "decode")
 
 ## Usage:
 
